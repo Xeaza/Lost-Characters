@@ -28,9 +28,8 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-//    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-//    self.navigationItem.rightBarButtonItem = addButton;
-
+    // Instead of doing a fetch each time to check if tableView is populated use UserDefaults
+    // to say the table as at one point been populated
     NSError *error;
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Character"];
     NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
@@ -38,6 +37,7 @@
     // If there's nothing in coredata go fetch the plist of default objects
     if (results.count == 0)
     {
+        // Not a really a good way to do this because it's syncronous and can be slow.
         NSArray *lostCharacters = [[NSArray alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://s3.amazonaws.com/mobile-makers-assets/app/public/ckeditor_assets/attachments/2/lost.plist"]];
         NSLog(@"%@",lostCharacters);
 
