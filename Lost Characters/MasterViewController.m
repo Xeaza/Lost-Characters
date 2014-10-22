@@ -74,8 +74,10 @@
     NSError *error;
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Character"];
     NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"passenger" ascending:YES];
-    //NSSortDescriptor *sortDescriptor2 = [[NSSortDescriptor alloc] initWithKey:@"prowess" ascending:YES];
-    //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"prowess > %d", 5];
+    // Don't really want a predicate. But could use one for further sorting
+    //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"passenger = 'worsley'"];
+    // Got this line from apple docs. Unlike the above the line can be uppwercase or lowercase.
+    //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"passenger LIKE[c] 'Worsley'"];
     //request.predicate = predicate;
     request.sortDescriptors = @[sortDescriptor1];
 
@@ -152,6 +154,7 @@
     cell.seatLabel.text        = seat;
     cell.sexLabel.text         = [character valueForKey:@"sex"];
     cell.shoeSizeLabel.text    = shoeSize;
+    cell.image.image = [UIImage imageWithData:[character valueForKey:@"image"]];
 
     return cell;
 }
@@ -178,11 +181,6 @@
         }
         [self loadData];
     }
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return @"SMOKE MONSTER";
 }
 
 @end

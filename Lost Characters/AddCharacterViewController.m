@@ -45,6 +45,12 @@
     [newCharacter setValue:self.textField5.text forKey:@"shoeSize"];
     [newCharacter setValue:self.textField5.text forKey:@"sex"];
 
+    // Save an image that's taken from the url below into core data as binary data
+    int width = arc4random_uniform(100) + 100;
+    int height = arc4random_uniform(100) + 100;
+    NSData * imageData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://placekitten.com/%d/%d", width, height]]];
+    [newCharacter setValue:UIImageJPEGRepresentation([UIImage imageWithData: imageData], 1) forKey:@"image"];
+
     if ([self.managedObjectContext save:&error]) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
