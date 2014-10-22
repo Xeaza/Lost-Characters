@@ -8,6 +8,8 @@
 
 #import "MasterViewController.h"
 #import "DetailViewController.h"
+#import "AddCharacterViewController.h"
+#import "LostCharacterTableViewCell.h"
 
 @interface MasterViewController ()
 @property NSArray *characters;
@@ -26,8 +28,8 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
+//    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+//    self.navigationItem.rightBarButtonItem = addButton;
 
     NSError *error;
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Character"];
@@ -66,7 +68,7 @@
 {
     NSError *error;
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"Character"];
-    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"actor" ascending:YES];
+    NSSortDescriptor *sortDescriptor1 = [[NSSortDescriptor alloc] initWithKey:@"passenger" ascending:YES];
     //NSSortDescriptor *sortDescriptor2 = [[NSSortDescriptor alloc] initWithKey:@"prowess" ascending:YES];
     //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"prowess > %d", 5];
     //request.predicate = predicate;
@@ -105,6 +107,7 @@
 //        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
 //        abort();
 //    }
+
     NSLog(@"HI");
 }
 
@@ -112,11 +115,14 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"showDetail"])
+    if ([[segue identifier] isEqualToString:@"AddCharacterSegue"])
     {
-        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-        [[segue destinationViewController] setDetailItem:object];
+        //NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        //NSManagedObject *character = [self.characters objectAtIndex:indexPath.row];
+        [[segue destinationViewController] setManagedObjectContext:self.managedObjectContext];
+        //[[segue destinationViewController] setDetailItem:object];
+        //AddCharacterViewController *addCharacterViewController = segue.destinationViewController;
+        //addCharacterViewController.navigationItem.title = [character valueForKey:@"actor"];
     }
 }
 
@@ -129,10 +135,48 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    [self configureCell:cell atIndexPath:indexPath];
+    LostCharacterTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+
+    NSManagedObject *character = [self.characters objectAtIndex:indexPath.row];
+
+    NSString *age, *hairColor, *seat, *shoeSize;
+    if ([character valueForKey:@"age"]) {
+        age = [@"Age: " stringByAppendingString:[character valueForKey:@"age"]];
+    }
+    else {
+        age = @"";
+    }
+    if ([character valueForKey:@"hairColor"]) {
+        hairColor = [@"Hair Color: " stringByAppendingString:[character valueForKey:@"hairColor"]];
+    }
+    else {
+        hairColor = @"";
+    }
+    if ([character valueForKey:@"planeSeat"]) {
+        seat = [@"Seat: " stringByAppendingString:[character valueForKey:@"planeSeat"]];
+    }
+    else {
+        seat = @"";
+    }
+    if ([character valueForKey:@"shoeSize"]) {
+        shoeSize = [@"Shoe Size: " stringByAppendingString:[character valueForKey:@"shoeSize"]];
+    }
+    else {
+        shoeSize = @"";
+    }
+
+
+    cell.nameLabel.text        = [character valueForKey:@"passenger"];
+    cell.ageLabel.text         = age;
+    cell.hairColorLabel.text   = hairColor;
+    cell.seatLabel.text        = seat;
+    cell.sexLabel.text         = [character valueForKey:@"sex"];
+    cell.shoeSizeLabel.text    = shoeSize;
+
     return cell;
 }
+
+
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -157,14 +201,6 @@
         }
     }
 }
-
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    NSManagedObject *character = [self.characters objectAtIndex:indexPath.row];
-    cell.textLabel.text = [character valueForKey:@"actor"];
-}
-
-
 
 
 
